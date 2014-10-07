@@ -1,17 +1,13 @@
 """An example using as many different features of rueckenwind as possible
 
 """
-import os
-import json
-
-import pkg_resources
-
 import tornado.web
-from rw import gen
-from rw import scope
+import perm
 import rw.testing
 import rw.http
 import rw.httpbase
+import rw.scope
+from rw import gen
 
 from . import model
 
@@ -28,7 +24,7 @@ plugin = rw.plugin.Plugin(__name__)
 
 class UserService(object):
     @gen.coroutine
-    @scope.inject
+    @rw.scope.inject
     def current(self, handler):
         rwuser = handler.get_secure_cookie('rwuser')
         if rwuser:
@@ -36,14 +32,14 @@ class UserService(object):
         raise gen.Return(rwuser)
 
     @gen.coroutine
-    @scope.inject
+    @rw.scope.inject
     def set_current(self, user, handler, app):
         cfg = app.settings.get('rwuser', {})
         expires = cfg.get('session_time_h', 24)
         handler.set_secure_cookie('rwuser', str(user['_id']), expires_days=expires/24.)
 
     @gen.coroutine
-    @scope.inject
+    @rw.scope.inject
     def login(self, handler):
         email = handler.get_argument('email')
         password = handler.get_argument('password')
@@ -53,7 +49,7 @@ class UserService(object):
             raise gen.Return(user)
 
     @gen.coroutine
-    @scope.inject
+    @rw.scope.inject
     def register(self, handler):
         email = handler.get_argument('email')
         password = handler.get_argument('password')
@@ -63,6 +59,29 @@ class UserService(object):
         yield user.insert()
         raise gen.Return(user)
 
+
+class PermissionDenied(tornado.web.HTTPError):
+    def __init__(self, permission, subject):
+        super(PermissionDenied, self).__init__(403)
+
+
+@gen.coroutine
+@rw.scope.inject
+def pre_request_handler(handler, scope, services):
+    user = yield services['user'].current()
+    scope['user'] = handler['user'] = user
+
+
 @plugin.init
 def init(scope, app):
+    perm.PERMISSION_DENIED_EXCEPTION = PermissionDenied
+
     scope.subscope('services')['user'] = UserService()
+
+    preload = app.rw_settings.get('rwuser', {}).get('preload_user', False)
+    if preload:
+        rw.httpbase.PRE_REQUEST.add(pre_request_handler)
+
+
+
+
