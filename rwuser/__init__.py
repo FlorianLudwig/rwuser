@@ -29,6 +29,8 @@ class UserService(object):
         rwuser = handler.get_secure_cookie('rwuser')
         if rwuser:
             rwuser = yield model.User.by_id(rwuser)
+        if rwuser is None:
+            rwuser = perm.Anonymous()
         raise gen.Return(rwuser)
 
     @gen.coroutine
