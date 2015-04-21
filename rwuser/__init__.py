@@ -75,15 +75,11 @@ def pre_request_handler(handler, scope, services):
 
 
 @plugin.init
-def init(scope, app):
+def init(scope, settings):
     perm.PERMISSION_DENIED_EXCEPTION = PermissionDenied
 
     scope.subscope('services')['user'] = UserService()
 
-    preload = app.rw_settings.get('rwuser', {}).get('preload_user', False)
+    preload = settings.get('rwuser', {}).get('preload_user', False)
     if preload:
         rw.httpbase.PRE_REQUEST.add(pre_request_handler)
-
-
-
-
