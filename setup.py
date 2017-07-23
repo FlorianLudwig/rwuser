@@ -4,7 +4,7 @@ from setuptools import setup
 config = {
     'name': 'rwuser',
     'author': 'Florian Ludwig',
-    'version': '0.0.1',
+    'version': '0.0.2',
     'install_requires': ['pytest', 'perm', 'fpt'],
     'packages': ['rwuser'],
     'entry_points': {
