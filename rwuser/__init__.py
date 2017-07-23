@@ -1,6 +1,11 @@
 """An example using as many different features of rueckenwind as possible
 
 """
+__author__ = """Florian Ludwig"""
+__email__ = 'f.ludwig@greyrook.com'
+__version__ = '0.0.1'
+
+
 import tornado.web
 import perm
 import rw.testing
@@ -69,8 +74,11 @@ class PermissionDenied(tornado.web.HTTPError):
 
 @gen.coroutine
 @rw.scope.inject
-def pre_request_handler(handler, scope, services):
-    user = yield services['user'].current()
+def pre_request_handler(handler, scope, settings, services):
+    preload = settings.get('rwuser', {}).get('preload_user', False)
+    user = services['user'].current()
+    if preload:
+        user = yield user
     scope['user'] = handler['user'] = user
 
 
@@ -79,7 +87,4 @@ def init(scope, settings):
     perm.PERMISSION_DENIED_EXCEPTION = PermissionDenied
 
     scope.subscope('services')['user'] = UserService()
-
-    preload = settings.get('rwuser', {}).get('preload_user', False)
-    if preload:
-        rw.httpbase.PRE_REQUEST.add(pre_request_handler)
+    rw.httpbase.PRE_REQUEST.add(pre_request_handler)
