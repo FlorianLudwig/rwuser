@@ -1,10 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from setuptools import setup
 
+with open('README.md') as readme_file:
+    readme = readme_file.read()
 
 config = {
     'name': 'rwuser',
-    'author': 'Florian Ludwig',
     'version': '0.0.2',
+    'author': 'Florian Ludwig',
+    'description': 'rueckenwind helpers for user management',
+    'long_description': readme,
+    'author_email': 'f.ludwig@greyrook.com',
+    'url': 'https://github.com/FlorianLudwig/rwuser',
+    
     'install_requires': ['pytest', 'perm', 'fpt'],
     'packages': ['rwuser'],
     'entry_points': {
@@ -12,7 +22,7 @@ config = {
             'rwuser = rwuser.cli:main',
         ],
     },
-    'license': "http://www.apache.org/licenses/LICENSE-2.0",
+    'license=': "Apache Software License 2.0",
     'classifiers': [
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
