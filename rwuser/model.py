@@ -5,23 +5,24 @@ from hashlib import sha256
 
 import perm
 import rwdb
+import tornado.util
 
 
 PASSWORD_RESET_EXPIRY = 24 * 60 * 60
 
 
 class User(rwdb.Document, perm.UserBase):
-    first_name = rwdb.Field(unicode)
-    last_name = rwdb.Field(unicode)
-    email = rwdb.Field(unicode)
-    password = rwdb.Field(unicode)
-    salt = rwdb.Field(unicode, default='')
+    first_name = rwdb.Field(tornado.util.unicode_type)
+    last_name = rwdb.Field(tornado.util.unicode_type)
+    email = rwdb.Field(tornado.util.unicode_type)
+    password = rwdb.Field(tornado.util.unicode_type)
+    salt = rwdb.Field(tornado.util.unicode_type, default='')
     groups = rwdb.Field(list)
     is_deleted = rwdb.Field(bool, default=False)
 
     def generate_password(self, pw):
         """generate password hash"""
-        if isinstance(pw, unicode):
+        if isinstance(pw, tornado.util.unicode_type):
             pw = pw.encode('utf-8')
 
         if not self.salt:
@@ -49,4 +50,3 @@ class User(rwdb.Document, perm.UserBase):
         self['password_reset_token'] = ''.join(chars)
         self['password_reset_expiry'] = time.time() + PASSWORD_RESET_EXPIRY
         return self['password_reset_token']
-
