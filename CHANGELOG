@@ -1,0 +1,6 @@
+0.0.2 (Released: 2017-07-23)
+============================
+
+ * Python3 support
+ * always provide `user` in scope, even with preload=False
+   If preload is False `user` is a Future object
