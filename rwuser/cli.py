@@ -21,24 +21,24 @@ ARG_PARSER = argparse.ArgumentParser(description=__doc__,
 
 @gen.coroutine
 def _user():
-    email = raw_input('E-Mail:')
+    email = input('E-Mail:')
     user = yield rwuser.model.User.find(email=email).find_one()
 
     if not user:
         user = rwuser.model.User()
         user.email = email
-        user.first_name = raw_input('First Name:')
-        user.last_name = raw_input('Last Name:')
+        user.first_name = input('First Name:')
+        user.last_name = input('Last Name:')
     user['admin'] = True
-    user.set_password(raw_input('Password:'))
+    user.set_password(input('Password:'))
 
-    for role in perm.KNOWN_ROLES.values():
+    for role in list(perm.KNOWN_ROLES.values()):
         has_role = user.has_role(role)
         msg = 'User {}? [{}]'.format(
             role.name,
             'Yn' if has_role else 'yN'
         )
-        answer = raw_input(msg).strip().lower()
+        answer = input(msg).strip().lower()
         if answer:
             if answer == 'y':
                 user.add_role(role)
@@ -83,7 +83,7 @@ def main():
                     print('{}. {}'.format(i, pkg))
                 selected = None
                 while selected not in pkgs:
-                    selected = raw_input('Select module: ')
+                    selected = input('Select module: ')
                     if selected.isdigit():
                         i = int(selected)
                         if 0 <= i <= len(pkgs):

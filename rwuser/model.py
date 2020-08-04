@@ -30,13 +30,14 @@ class User(rwdb.Document, perm.UserBase):
             # having 100 possibilities we are at
             #  log2( 100**32 ) ~= 212 bits
             # of added salt
-            chars = [random.choice(string.printable) for x in xrange(32)]
+            chars = [random.choice(string.printable) for x in range(32)]
             self.salt = ''.join(chars)
 
         pw = sha256(pw).hexdigest()
-        ret = sha256(pw + self.salt).hexdigest()
-        for i in xrange(1328):
-            ret = sha256(ret).hexdigest()
+        salted_pw = pw + self.salt
+        ret = sha256(salted_pw.encode('utf-8')).hexdigest()
+        for i in range(1328):
+            ret = sha256(ret.encode('utf-8')).hexdigest()
         return ret
 
     def set_password(self, pw):
@@ -46,7 +47,7 @@ class User(rwdb.Document, perm.UserBase):
         return self.generate_password(pw) == self.password
 
     def generate_password_reset_token(self):
-        chars = [random.choice(string.ascii_letters + string.digits) for x in xrange(12)]
+        chars = [random.choice(string.ascii_letters + string.digits) for x in range(12)]
         self['password_reset_token'] = ''.join(chars)
         self['password_reset_expiry'] = time.time() + PASSWORD_RESET_EXPIRY
         return self['password_reset_token']
