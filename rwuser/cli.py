@@ -80,7 +80,7 @@ def main():
             elif len(pkgs) > 1:
                 print('Available module')
                 for i, pkg in enumerate(data['packages']):
-                    print(('{}. {}'.format(i, pkg)))
+                    print('{}. {}'.format(i, pkg))
                 selected = None
                 while selected not in pkgs:
                     selected = input('Select module: ')

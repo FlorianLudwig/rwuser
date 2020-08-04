@@ -34,9 +34,10 @@ class User(rwdb.Document, perm.UserBase):
             self.salt = ''.join(chars)
 
         pw = sha256(pw).hexdigest()
-        ret = sha256(pw + self.salt).hexdigest()
+        salted_pw = pw + self.salt
+        ret = sha256(salted_pw.encode('utf-8')).hexdigest()
         for i in range(1328):
-            ret = sha256(ret).hexdigest()
+            ret = sha256(ret.encode('utf-8')).hexdigest()
         return ret
 
     def set_password(self, pw):
