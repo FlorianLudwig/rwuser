@@ -43,7 +43,7 @@ class UserService(object):
     def set_current(self, user, handler, app):
         cfg = app.settings.get('rwuser', {})
         expires = cfg.get('session_time_h', 24)
-        handler.set_secure_cookie('rwuser', str(user['_id']), expires_days=expires/24.)
+        handler.set_secure_cookie('rwuser', str(user['_id']), expires_days=expires/24., secure=True, httponly=True)
 
     @gen.coroutine
     @rw.scope.inject
