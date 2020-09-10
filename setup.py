@@ -8,7 +8,7 @@ with open('README.md') as readme_file:
 
 config = {
     'name': 'rwuser',
-    'version': '0.0.2',
+    'version': '0.0.3',
     'author': 'Florian Ludwig',
     'description': 'rueckenwind helpers for user management',
     'long_description': readme,
